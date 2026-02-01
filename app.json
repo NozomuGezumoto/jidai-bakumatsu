@@ -9,21 +9,23 @@
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nozomugezumoto.jidaiBakumatsu",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "写真は、出来事の記録に画像を添付するためにのみ使用します。写真は端末内で処理され、許可なく送信されません。"
+      }
     },
     "android": {
+      "package": "com.nozomugezumoto.jidaiBakumatsu",
+      "versionCode": 1,
       "adaptiveIcon": {
         "backgroundColor": "#0F0F14",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
-      "config": {
-        "googleMaps": {
-          "apiKey": "YOUR_GOOGLE_MAPS_API_KEY"
-        }
-      }
+      "edgeToEdgeEnabled": true
     },
     "web": {
       "output": "static",
