@@ -1,5 +1,5 @@
 // ============================================
-// My Kyoto - Root Layout
+// 幕末歴史アプリ - Root Layout
 // ============================================
 
 import { Stack } from 'expo-router';
@@ -20,6 +20,13 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="event/[id]"
+          options={{
+            animation: 'slide_from_bottom',
+          }}
+        />
+        {/* 既存のMy Kyoto用ルート（必要に応じて残す） */}
         <Stack.Screen
           name="add-memory"
           options={{

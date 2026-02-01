@@ -1,25 +1,29 @@
 // ============================================
 // 幕末歴史アプリ - メイン画面
-// 地図 + 年号スライダー + 人物フィルター + イベント追加
+// 地図 + 年号スライダー + 人物フィルター
 // ============================================
 
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useCallback, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import BakumatsuMap from '../../src/components/map/BakumatsuMap';
-import AddEventModal from '../../src/components/ui/AddEventModal';
-import EventPreviewSheet from '../../src/components/ui/EventPreviewSheet';
-import PersonFilter from '../../src/components/ui/PersonFilter';
-import UndoToast from '../../src/components/ui/UndoToast';
-import YearSlider from '../../src/components/ui/YearSlider';
-import { COLORS, SPACING } from '../../src/constants/theme';
-import { useBakumatsuStore } from '../../src/store/useBakumatsuStore';
-import { BakumatsuEvent } from '../../src/types/bakumatsu';
+import BakumatsuMap from '../components/map/BakumatsuMap';
+import AddEventModal from '../components/ui/AddEventModal';
+import EventPreviewSheet from '../components/ui/EventPreviewSheet';
+import PersonFilter from '../components/ui/PersonFilter';
+import UndoToast from '../components/ui/UndoToast';
+import YearSlider from '../components/ui/YearSlider';
+import { COLORS, SPACING } from '../constants/theme';
+import { useBakumatsuStore } from '../store/useBakumatsuStore';
+import { BakumatsuEvent, BakumatsuStackParamList } from '../types/bakumatsu';
+
+type NavigationProp = NativeStackNavigationProp<BakumatsuStackParamList, 'Main'>;
 
 export default function BakumatsuMapScreen() {
-  const router = useRouter();
+  const navigation = useNavigation<NavigationProp>();
   const insets = useSafeAreaInsets();
   const previewSheetRef = useRef<BottomSheet>(null);
 
@@ -47,16 +51,9 @@ export default function BakumatsuMapScreen() {
 
   const handleOpenDetail = useCallback(() => {
     if (selectedEvent) {
-      previewSheetRef.current?.close();
-      router.push(`/event/${selectedEvent.id}`);
+      navigation.navigate('EventDetail', { eventId: selectedEvent.id });
     }
-  }, [router, selectedEvent]);
-
-  // 長押しで直接詳細画面へ遷移
-  const handleEventLongPress = useCallback((event: BakumatsuEvent) => {
-    previewSheetRef.current?.close();
-    router.push(`/event/${event.id}`);
-  }, [router]);
+  }, [navigation, selectedEvent]);
 
   // 地図タップで位置選択（位置選択モード時）
   const handleMapPress = useCallback((coordinate: { lat: number; lng: number }) => {
@@ -76,13 +73,10 @@ export default function BakumatsuMapScreen() {
   // イベント編集
   const handleEditEvent = useCallback(() => {
     if (selectedEvent && selectedEvent.id.startsWith('custom-')) {
-      previewSheetRef.current?.close();
-      // 先にeditEventIdを設定してから、少し遅延してモーダルを開く
-      // これにより、useEffectが正しく編集モードを検知できる
       setEditEventId(selectedEvent.id);
-      setTimeout(() => {
-        setEventLocation({ lat: selectedEvent.lat, lng: selectedEvent.lng });
-      }, 100);
+      previewSheetRef.current?.close();
+      // 編集モードでモーダルを開く（位置は既存のまま）
+      setEventLocation({ lat: selectedEvent.lat, lng: selectedEvent.lng });
     }
   }, [selectedEvent, setEventLocation]);
 
@@ -93,49 +87,53 @@ export default function BakumatsuMapScreen() {
   }, [closeAddEventModal]);
 
   return (
-    <View style={styles.container}>
-      {/* フルスクリーンマップ */}
-      <BakumatsuMap
-        onEventPress={handleEventPress}
-        onEventLongPress={handleEventLongPress}
-        onMapPress={handleMapPress}
-        temporaryPin={pendingEventLocation}
-        isAddMode={isSelectingLocation}
-        onCancelAddMode={cancelLocationSelection}
-        onAddEvent={startLocationSelection}
-      />
+    <GestureHandlerRootView style={styles.container}>
+      <View style={styles.container}>
+        {/* フルスクリーンマップ */}
+        <BakumatsuMap 
+          onEventPress={handleEventPress}
+          onMapPress={handleMapPress}
+          temporaryPin={pendingEventLocation}
+          isAddMode={isSelectingLocation}
+          onCancelAddMode={cancelLocationSelection}
+          onAddEvent={startLocationSelection}
+        />
 
-      {/* 上部コントロール */}
-      <View style={[styles.controlsContainer, { top: insets.top + SPACING.md }]}>
-        {/* 年号スライダー */}
-        <YearSlider />
+        {/* 上部コントロール */}
+        <View 
+          style={[styles.controlsContainer, { top: insets.top + SPACING.md }]}
+          pointerEvents="box-none"
+        >
+          {/* 年号スライダー */}
+          <YearSlider />
 
-        {/* 人物フィルター */}
-        <PersonFilter />
+          {/* 人物フィルター */}
+          <PersonFilter />
+        </View>
+
+        {/* イベントプレビューシート */}
+        <EventPreviewSheet
+          ref={previewSheetRef}
+          event={selectedEvent}
+          onClose={handlePreviewClose}
+          onOpenDetail={handleOpenDetail}
+          onEdit={handleEditEvent}
+        />
+
+        {/* イベント追加/編集モーダル */}
+        <AddEventModal
+          visible={showAddEventModal}
+          onClose={handleCloseModal}
+          initialLocation={pendingEventLocation || undefined}
+          editEventId={editEventId}
+          onSelectLocation={handleSelectLocation}
+          currentYear={currentYear}
+        />
+
+        {/* Undoトースト */}
+        <UndoToast />
       </View>
-
-      {/* イベントプレビューシート */}
-      <EventPreviewSheet
-        ref={previewSheetRef}
-        event={selectedEvent}
-        onClose={handlePreviewClose}
-        onOpenDetail={handleOpenDetail}
-        onEdit={handleEditEvent}
-      />
-
-      {/* イベント追加/編集モーダル */}
-      <AddEventModal
-        visible={showAddEventModal}
-        onClose={handleCloseModal}
-        initialLocation={pendingEventLocation || undefined}
-        editEventId={editEventId}
-        onSelectLocation={handleSelectLocation}
-        currentYear={currentYear}
-      />
-
-      {/* Undoトースト */}
-      <UndoToast />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -151,3 +149,4 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
 });
+

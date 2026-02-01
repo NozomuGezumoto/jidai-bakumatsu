@@ -1,9 +1,9 @@
 {
-  "name": "my-kyoto-54",
+  "name": "bakumatsu-history",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -27,6 +27,7 @@
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
     "expo-image-picker": "~17.0.10",
+    "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~8.0.11",
     "expo-location": "~19.0.8",
     "expo-router": "~6.0.21",
@@ -51,9 +52,9 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
-    "typescript": "~5.9.2",
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~10.0.0"
+    "eslint-config-expo": "~10.0.0",
+    "typescript": "~5.9.2"
   },
   "private": true
 }
