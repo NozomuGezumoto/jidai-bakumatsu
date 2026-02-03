@@ -366,7 +366,7 @@ export default function EventDetailScreen() {
 
   const photos = pinRecord?.photos || [];
 
-  // 下部背景画像を取得
+  // 下部背景画像を取得（カスタム背景があればそれを使用、なければfuji.jpg）
   const mainBackgroundSource = pinRecord?.mainBackground 
     ? { uri: pinRecord.mainBackground }
     : FUJI_BACKGROUND;

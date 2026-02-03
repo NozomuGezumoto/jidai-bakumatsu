@@ -2,7 +2,7 @@
   "expo": {
     "name": "幕末歴史",
     "slug": "bakumatsu-history",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "bakumatsu",
@@ -11,14 +11,15 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.nozomugezumoto.jidaiBakumatsu",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "infoPlist": {
-        "NSPhotoLibraryUsageDescription": "写真は、出来事の記録に画像を添付するためにのみ使用します。写真は端末内で処理され、許可なく送信されません。"
+        "NSPhotoLibraryUsageDescription": "写真は、出来事の記録に画像を添付するためにのみ使用します。写真は端末内で処理され、許可なく送信されません。",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "package": "com.nozomugezumoto.jidaiBakumatsu",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "backgroundColor": "#0F0F14",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -46,6 +47,12 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "2566cb34-3fad-4209-b903-28753dc4ac18"
+      }
     }
   }
 }
